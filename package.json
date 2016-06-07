@@ -1,7 +1,7 @@
 {
   "name": "cfn-docs",
   "version": "1.0.0",
-  "description": "Find documentation for CloudFormation templates.",
+  "description": "Find documentation for AWS CloudFormation.",
   "bin": {
     "cfn-docs": "./cli.js"
   },

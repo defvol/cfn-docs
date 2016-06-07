@@ -1,6 +1,6 @@
 # cfn-docs
 
-Find documentation for CloudFormation templates.
+Find documentation for AWS CloudFormation.
 
 From the CLI:
 
