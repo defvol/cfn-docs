@@ -1,0 +1,28 @@
+{
+  "name": "cfn-docs",
+  "version": "1.0.0",
+  "description": "Find documentation for CloudFormation templates.",
+  "bin": {
+    "cfn-docs": "./cli.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "keywords": [
+    "AWS",
+    "cli",
+    "CloudFormation",
+    "docs",
+    "Documentation"
+  ],
+  "author": "Rodolfo Wilhelmy <rwilhelmy@gmail.com> (http://wilhel.me)",
+  "license": "ISC",
+  "devDependencies": {
+    "tape": "^4.5.1"
+  },
+  "dependencies": {
+    "cheerio": "^0.20.0",
+    "minimist": "^1.2.0"
+  }
+}
