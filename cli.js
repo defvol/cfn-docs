@@ -3,7 +3,7 @@ var modu = require('./index');
 
 var usage = function() {
   var text = [];
-  text.push('Find documentation for CloudFormation templates');
+  text.push('Find documentation for AWS CloudFormation.');
   text.push('usage: cfn-docs [options]');
   text.push('');
   text.push(' --find display doc for a CFN resource');
