@@ -2,6 +2,7 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const http = require('http');
 const URL = 'http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html';
+const CACHE = 'cache.json';
 
 function CFNDocs() { return this }
 
@@ -13,7 +14,7 @@ function CFNDocs() { return this }
  */
 CFNDocs.prototype.client = function (config, done) {
   var self = this;
-  self.cache = config.cache || 'docs.json';
+  self.cache = config.cache || CACHE;
   self.fetch((err, links) => {
     if (err) throw err;
     self._links = links;
@@ -85,7 +86,7 @@ CFNDocs.prototype.fetch = function (done) {
       self.download(self.URL, (err, html) => {
         if (err) throw err;
         var links = self.extractLinksFromHTML(html);
-        write(links, (err, links) => {
+        write(self.cache, links, (err, links) => {
           done(err, links);
         });
       });
@@ -107,13 +108,13 @@ CFNDocs.prototype.find = function(key) {
 
 /**
  * Write documentation links to disk
+ * @param {string} file to write to
  * @param {string|buffer} data to save to disk
  * @return {function} done callback notifying the caller that the job is done
  *
  */
-function write(links, done) {
-  var cache = this.cache || 'docs.json';
-  fs.writeFile(cache, JSON.stringify(links), (err) => {
+function write(file, links, done) {
+  fs.writeFile(file, JSON.stringify(links), (err) => {
     if (err) throw err;
     done(null, links);
   });
