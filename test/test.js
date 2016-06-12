@@ -31,7 +31,7 @@ test('setup', function (t) {
 
 test('cfn-docs.download', function (t) {
   t.plan(2);
-  cfn.download(function (err, html) {
+  cfn.download(null, function (err, html) {
     t.true(html.length > 1024, 'downloads thousands of bytes');
     t.true(html.match(/CloudFormation/), 'of CloudFormation docs');
   });

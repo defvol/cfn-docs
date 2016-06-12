@@ -25,11 +25,14 @@ CFNDocs.prototype.client = function (config, done) {
 
 /**
  * Download docs from a site
+ * @param {string} url to download docs from (optional)
  * @param {function} done callback returning html
  *
  */
-CFNDocs.prototype.download = function (done) {
-  http.get(DOCS_URL, (res) => {
+CFNDocs.prototype.download = function (url, done) {
+  if (!url) url = DOCS_URL;
+
+  http.get(url, (res) => {
     var html = '';
     res.setEncoding('utf8');
     res.on('data', (chunk) => { html += chunk });
@@ -82,7 +85,7 @@ CFNDocs.prototype.fetch = function (done) {
 
   fs.readFile(self.cache, 'utf8', (err, data) => {
     if (err) {
-      self.download((err, html) => {
+      self.download(null, (err, html) => {
         if (err) throw err;
         var links = self.extractLinksFromHTML(html);
         write(self.cache, links, (err, links) => {
