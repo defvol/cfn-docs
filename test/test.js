@@ -31,7 +31,7 @@ test('setup', function (t) {
 
 test('CFNDocs.download', function (t) {
   t.plan(2);
-  cfn.download(null, function (err, html) {
+  cfn.download(function (err, html) {
     t.true(html.length > 1024, 'downloads thousands of bytes');
     t.true(html.match(/CloudFormation/), 'of CloudFormation docs');
   });
@@ -40,7 +40,7 @@ test('CFNDocs.download', function (t) {
 test('cfn-docs.extractLinksFromHTML', function (t) {
   var found = cfn.extractLinksFromHTML(references.template);
   var wants = {
-    link: 'using-cfn-updating-stacks-changesets-samples.html',
+    link: cfn.URL + '/using-cfn-updating-stacks-changesets-samples.html',
     name: 'Example Change Sets'
   };
   t.equal(found.length, 546, 'finds hundreds of references');

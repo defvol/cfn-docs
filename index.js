@@ -1,14 +1,15 @@
 const cheerio = require('cheerio');
 const fs = require('fs');
 const http = require('http');
-const URL = 'http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html';
+const URL = 'http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide';
+const DOCS_URL = URL + '/' + '/template-reference.html';
 const CACHE = 'cache.json';
 
 function CFNDocs() { return this }
 
 /**
  * Load docs and return a client interface
- * @param {object} configuration, e.g. a custom url, cache policy
+ * @param {object} configuration, e.g. cache policy
  * @param {function} done callback returning a CFNDocs client
  *
  */
@@ -24,14 +25,11 @@ CFNDocs.prototype.client = function (config, done) {
 
 /**
  * Download docs from a site
- * @param {string} url to download docs from
  * @param {function} done callback returning html
  *
  */
-CFNDocs.prototype.download = function (url, done) {
-  if (!url) url = this.URL;
-  var self = this;
-  http.get(url, (res) => {
+CFNDocs.prototype.download = function (done) {
+  http.get(DOCS_URL, (res) => {
     var html = '';
     res.setEncoding('utf8');
     res.on('data', (chunk) => { html += chunk });
@@ -53,7 +51,7 @@ CFNDocs.prototype.extractLinksFromHTML = function(dom) {
   var matches = [];
   $('a.awstoc').each((index, elem) => {
     matches.push({
-      link: $(elem).attr('href'),
+      link: URL + '/' + $(elem).attr('href'),
       name: $(elem).text()
     });
   });
@@ -83,7 +81,7 @@ CFNDocs.prototype.fetch = function (done) {
 
   fs.readFile(self.cache, 'utf8', (err, data) => {
     if (err) {
-      self.download(self.URL, (err, html) => {
+      self.download((err, html) => {
         if (err) throw err;
         var links = self.extractLinksFromHTML(html);
         write(self.cache, links, (err, links) => {
