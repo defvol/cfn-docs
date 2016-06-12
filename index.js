@@ -25,11 +25,14 @@ CFNDocs.prototype.client = function (config, done) {
 
 /**
  * Download docs from a site
+ * @param {string} url to download docs from (optional)
  * @param {function} done callback returning html
  *
  */
-CFNDocs.prototype.download = function (done) {
-  http.get(DOCS_URL, (res) => {
+CFNDocs.prototype.download = function (url, done) {
+  if (!url) url = DOCS_URL;
+
+  http.get(url, (res) => {
     var html = '';
     res.setEncoding('utf8');
     res.on('data', (chunk) => { html += chunk });
@@ -65,10 +68,11 @@ CFNDocs.prototype.extractLinksFromHTML = function(dom) {
  *
  */
 CFNDocs.prototype.extractContentFromHTML = function(dom) {
-  // TODO: parse documentation page
-  // e.g. http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-  // excerpt: $($('div.titlepage + p')[0]).text()
-  // syntax: $('div.titlepage:contains("Syntax") + pre').text();
+  var $ = cheerio.load(dom);
+  return {
+    excerpt: $('div.titlepage + p').first().text(),
+    syntax: $('div.titlepage:contains("Syntax") + pre').text()
+  };
 }
 
 /**
@@ -81,7 +85,7 @@ CFNDocs.prototype.fetch = function (done) {
 
   fs.readFile(self.cache, 'utf8', (err, data) => {
     if (err) {
-      self.download((err, html) => {
+      self.download(null, (err, html) => {
         if (err) throw err;
         var links = self.extractLinksFromHTML(html);
         write(self.cache, links, (err, links) => {
