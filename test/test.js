@@ -1,5 +1,6 @@
 const docs = require('../index');
 const fs = require('fs');
+const nock = require('nock');
 const path = __dirname + '/fixtures';
 const read = fs.readFileSync;
 const test = require('tape').test;
@@ -11,6 +12,13 @@ const references = {
 
 var cfn = null;
 
+const server = nock(docs.URL)
+  .persist()
+  .get(/template-reference/)
+  .reply(200, references.template)
+  .get(/aws-properties-ec2-security-group/)
+  .reply(200, references.security);
+
 test('setup', function (t) {
   t.plan(3);
   docs.client({}, (err, client) => {
@@ -21,8 +29,7 @@ test('setup', function (t) {
   });
 });
 
-// TODO: stub server response and set skip to false
-test('CFNDocs.download', { skip: true }, function (t) {
+test('CFNDocs.download', function (t) {
   t.plan(2);
   cfn.download(null, function (err, html) {
     t.true(html.length > 1024, 'downloads thousands of bytes');

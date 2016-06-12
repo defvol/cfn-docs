@@ -19,6 +19,7 @@
   "author": "Rodolfo Wilhelmy <rwilhelmy@gmail.com> (http://wilhel.me)",
   "license": "ISC",
   "devDependencies": {
+    "nock": "^8.0.0",
     "tape": "^4.5.1"
   },
   "dependencies": {
