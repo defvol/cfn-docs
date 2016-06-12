@@ -8,6 +8,7 @@ var usage = function() {
   text.push('');
   text.push(' --find display doc for a CFN resource');
   text.push(' --help prints this message');
+  text.push(' --reload download docs and update cache');
   text.push('');
   return text.join('\n');
 };
@@ -19,6 +20,12 @@ if (argv.find) {
   });
 } else if (argv.help) {
   console.log(usage());
+} else if (argv.reload) {
+  modu.client({}, function (err, client) {
+    client.reload((err, res) => {
+      console.log('%s resources were updated', res.length);
+    });
+  });
 } else {
   console.log('Command not found. Try any of the following:');
   console.log(usage());

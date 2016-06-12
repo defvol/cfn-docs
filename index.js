@@ -105,6 +105,16 @@ CFNDocs.prototype.find = function(key) {
 };
 
 /**
+ * Clear cache and fetch resources
+ * @return {function} done callback notifying the caller that the job is done
+ *
+ */
+CFNDocs.prototype.reload = function(done) {
+  fs.unlinkSync('./' + CACHE);
+  this.fetch((err, res) => done(err, res));
+}
+
+/**
  * Write documentation links to disk
  * @param {string} file to write to
  * @param {string|buffer} data to save to disk
