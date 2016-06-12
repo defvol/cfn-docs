@@ -23,13 +23,13 @@ test('setup', function (t) {
   t.plan(3);
   docs.client({}, (err, client) => {
     t.error(err, 'without errors');
-    t.ok(client, 'we get a CFNDocs client');
+    t.ok(client, 'we get a cfn-docs client');
     t.true(client._links.length > 500, 'with docs loaded');
     cfn = client;
   });
 });
 
-test('CFNDocs.download', function (t) {
+test('cfn-docs.download', function (t) {
   t.plan(2);
   cfn.download(function (err, html) {
     t.true(html.length > 1024, 'downloads thousands of bytes');
@@ -48,7 +48,17 @@ test('cfn-docs.extractLinksFromHTML', function (t) {
   t.end();
 });
 
-test('CFNDocs.fetch', function (t) {
+test('cfn-docs.extractContentFromHTML', function (t) {
+  var found = cfn.extractContentFromHTML(references.security);
+  var wants = found.excerpt.match(/Creates an Amazon EC2 security group/);
+  t.true(wants, 'retrieves summary from documentation');
+  wants = found.syntax.match(/SecurityGroupIngress/);
+  t.true(wants, 'retrieves syntax');
+
+  t.end();
+});
+
+test('cfn-docs.fetch', function (t) {
   t.plan(2);
   cfn.fetch((err, links) => {
     t.true(links.length > 100, 'hundreds of links');

@@ -65,10 +65,11 @@ CFNDocs.prototype.extractLinksFromHTML = function(dom) {
  *
  */
 CFNDocs.prototype.extractContentFromHTML = function(dom) {
-  // TODO: parse documentation page
-  // e.g. http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group.html
-  // excerpt: $($('div.titlepage + p')[0]).text()
-  // syntax: $('div.titlepage:contains("Syntax") + pre').text();
+  var $ = cheerio.load(dom);
+  return {
+    excerpt: $('div.titlepage + p').first().text(),
+    syntax: $('div.titlepage:contains("Syntax") + pre').text()
+  };
 }
 
 /**
