@@ -110,11 +110,10 @@ CFNDocs.prototype.find = function(key, done) {
   if (found && (!found.excerpt || !found.syntax)) {
     self.scrapeContent(found, function (err, resource) {
       if (err) throw err;
-      found = resource;
-      done(found);
       write(self.cache, self._links, function (err, done) {
         if (err) throw err;
       });
+      done(resource);
     });
   } else {
     done(found);
@@ -140,7 +139,7 @@ CFNDocs.prototype.reload = function(done) {
    self.download(reference.link, function (err, html) {
      if (err) done(err);
      var content = self.extractContentFromHTML(html);
-     var updated = Object.assign({}, reference, content);
+     var updated = Object.assign(reference, content);
      done(null, updated);
    });
  };
