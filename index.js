@@ -104,8 +104,20 @@ CFNDocs.prototype.fetch = function (done) {
  * @return {object} JSON { name, excerpt, link, syntax }
  *
  */
-CFNDocs.prototype.find = function(key) {
-  return this._links.find((elem) => { return elem.name == key });
+CFNDocs.prototype.find = function(key, done) {
+  var self = this;
+  var found = self._links.find((elem) => { return elem.name == key });
+  if (found && (!found.excerpt || !found.syntax)) {
+    self.scrapeContent(found, function (err, resource) {
+      if (err) throw err;
+      write(self.cache, self._links, function (err, done) {
+        if (err) throw err;
+      });
+      done(resource);
+    });
+  } else {
+    done(found);
+  }
 };
 
 /**
@@ -119,6 +131,20 @@ CFNDocs.prototype.reload = function(done) {
 }
 
 /**
+ * Scrape a link and return updated reference with content
+ *
+ */
+ CFNDocs.prototype.scrapeContent = function (reference, done) {
+   var self = this;
+   self.download(reference.link, function (err, html) {
+     if (err) done(err);
+     var content = self.extractContentFromHTML(html);
+     var updated = Object.assign(reference, content);
+     done(null, updated);
+   });
+ };
+
+/**
  * Write documentation links to disk
  * @param {string} file to write to
  * @param {string|buffer} data to save to disk
@@ -126,6 +152,7 @@ CFNDocs.prototype.reload = function(done) {
  *
  */
 function write(file, links, done) {
+  if (!file) file = this.cache;
   fs.writeFile(file, JSON.stringify(links), (err) => {
     if (err) throw err;
     done(null, links);
