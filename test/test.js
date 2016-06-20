@@ -67,11 +67,15 @@ test('cfn-docs.fetch', function (t) {
 });
 
 test('cfn-docs.find', function (t) {
-  var found = cfn.find('AWS::EC2::SecurityGroup');
-  var wants = {
-    link: cfn.URL + '/aws-properties-ec2-security-group.html',
-    name: 'AWS::EC2::SecurityGroup'
-  };
-  t.deepEqual(found, wants, 'returns the AWS::EC2::SecurityGroup link');
-  t.end();
+  t.plan(4);
+
+  var wants = cfn.URL + '/aws-properties-ec2-security-group.html';
+
+  cfn.find('AWS::EC2::SecurityGroup', (found) => {
+    t.equal(found.link, wants, 'has link');
+    t.equal(found.name, 'AWS::EC2::SecurityGroup', 'has name');
+    t.true(found.excerpt.match(/security group/), 'has excerpt');
+    t.true(found.syntax.match(/SecurityGroupEgress/), 'and syntax');
+  });
+
 });

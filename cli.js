@@ -15,8 +15,9 @@ var usage = function() {
 
 if (argv.find) {
   modu.client({}, function (err, client) {
-    var found = client.find(argv.find);
-    console.log(found);
+    client.find(argv.find, function (found) {
+      console.log(found);
+    });
   });
 } else if (argv.help) {
   console.log(usage());
